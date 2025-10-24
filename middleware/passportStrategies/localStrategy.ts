@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { getUserByEmailIdAndPassword, getUserById} from "../../controllers/userController";
 import { PassportStrategy } from '../../interfaces/index';
 
+
 const localStrategy = new LocalStrategy(
   {
     usernameField: "email",
@@ -18,17 +19,11 @@ const localStrategy = new LocalStrategy(
   }
 );
 
-/*
-FIX ME (types) 😭
-*/
-passport.serializeUser(function (user: any, done: any) {
+passport.serializeUser((user:Express.User, done) => {
   done(null, user.id);
 });
 
-/*
-FIX ME (types) 😭
-*/
-passport.deserializeUser(function (id: any, done: any) {
+passport.deserializeUser((id: number, done) => {
   let user = getUserById(id);
   if (user) {
     done(null, user);
