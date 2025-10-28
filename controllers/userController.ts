@@ -11,8 +11,26 @@ const getUserByEmailIdAndPassword = (email: string, password: string) => {
   }
   return null;
 };
+
+const getGithubUserByProfile = (profile: string) => {
+  const result = userModel.findOne(profile);
+  const user = result.user;
+  if (user) {
+    return user;
+  }
+  return null;
+}
+
 const getUserById = (id:number) => {
   let user = userModel.findById(id);
+  if (user) {
+    return user;
+  }
+  return null;
+};
+
+const getUserByGithubId = (id:string) => {
+  let user = userModel.findByGitHubId(id) || null;
   if (user) {
     return user;
   }
@@ -26,4 +44,6 @@ function isUserValid(user: TUser, password: string) {
 export {
   getUserByEmailIdAndPassword,
   getUserById,
+  getUserByGithubId,
+  getGithubUserByProfile
 };

@@ -2,7 +2,14 @@ import { Strategy as GitHubStrategy } from 'passport-github2';
 import { PassportStrategy } from '../../interfaces/index';
 import { Profile } from 'passport';
 import { VerifyCallback } from "passport-oauth2";
-import { getUserById } from "../../controllers/userController";
+import { getGithubUserByProfile } from "../../controllers/userController";
+
+
+type PassportDone = (
+  error: Error | null,
+  user?: Express.User | false,
+  info?: { message: string }
+) => void;
 
 const githubStrategy: GitHubStrategy = new GitHubStrategy(
     {
@@ -12,15 +19,21 @@ const githubStrategy: GitHubStrategy = new GitHubStrategy(
         passReqToCallback: true,
     },
     
-    async ( req: Express.Request, accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback ) => {
-      let user = getUserById(profile.id);
+    ( 
+        req: Express.Request, 
+        accessToken: string, 
+        refreshToken: string, 
+        profile: Profile, 
+        done: PassportDone ) => 
+            {
+            const user = getGithubUserByProfile(profile.id);
         
-    return user
-      ? done(null, user)
-      : done(null, false, {
-          message: "Your login details are not valid. Please try again",
-        });
-    },
+            return user
+            ? done(null, user)
+            : done(null, false, {
+                message: "Your login details are not valid. Please try again",
+                });
+            },
 );
 
 const passportGitHubStrategy: PassportStrategy = {

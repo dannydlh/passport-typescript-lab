@@ -5,7 +5,7 @@ import PassportConfig from "./PassportConfig";
 import localStrategy from "./passportStrategies/localStrategy";
 import passportGitHubStrategy from "./passportStrategies/githubStrategy";
 
-const passportConfig = new PassportConfig([localStrategy]);
+const passportConfig = new PassportConfig([localStrategy, passportGitHubStrategy]);
 const passportMiddleware = (app: Application): void => {
   app.use(passport.initialize());
   app.use(passport.session());
