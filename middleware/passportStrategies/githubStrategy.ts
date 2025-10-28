@@ -15,24 +15,24 @@ const githubStrategy: GitHubStrategy = new GitHubStrategy(
     {
         clientID: process.env.CLIENT_ID!,
         clientSecret: process.env.CLIENT_SECRET_KEY!,
-        callbackURL: "http://localhost:3000/auth/github/callback",
+        callbackURL: "http://localhost:8000/auth/github/callback",
         passReqToCallback: true,
     },
     
-    ( 
+    async ( 
         req: Express.Request, 
         accessToken: string, 
         refreshToken: string, 
         profile: Profile, 
         done: PassportDone ) => 
             {
-            const user = getGithubUserByProfile(profile.id);
-        
-            return user
-            ? done(null, user)
-            : done(null, false, {
-                message: "Your login details are not valid. Please try again",
-                });
+                const user = await getGithubUserByProfile(profile.id);
+            
+                return user
+                ? done(null, user)
+                : done(null, false, {
+                    message: "Your login details are not valid. Please try again",
+                    });
             },
 );
 
