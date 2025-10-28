@@ -33,9 +33,9 @@ router.get('/github',
   passport.authenticate('github', { scope: [ 'user:email' ] }));
 
 router.get('/github/callback', 
-  passport.authenticate('github', { failureRedirect: '/login' }),
+  passport.authenticate('github', { failureRedirect: '/auth/login' }),
   function(req, res) {
-    res.redirect('/auth/github/success');
+    res.redirect('/dashboard');
   });
 
 export default router;

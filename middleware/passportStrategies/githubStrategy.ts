@@ -1,8 +1,13 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { PassportStrategy } from '../../interfaces/index';
 import { Profile } from 'passport';
 import { VerifyCallback } from "passport-oauth2";
-import { getGithubUserByProfile } from "../../controllers/userController";
+import { getGithubUserByProfile, getUserByGithubId } from "../../controllers/userController";
+import passport from "passport";
+import type { TUser } from '../../types/types';
 
 
 type PassportDone = (
@@ -27,6 +32,13 @@ const githubStrategy: GitHubStrategy = new GitHubStrategy(
         done: PassportDone ) => 
             {
                 const user = await getGithubUserByProfile(profile.id);
+                if (!user) {
+                    const newUser =  {  
+                        githubId: profile.id,
+                        username: profile.username
+                    };
+                    return done(null, newUser);
+                }
             
                 return user
                 ? done(null, user)
@@ -35,6 +47,20 @@ const githubStrategy: GitHubStrategy = new GitHubStrategy(
                     });
             },
 );
+
+passport.serializeUser((user:Express.User, done) => {
+  done(null, user.githubId);
+});
+
+passport.deserializeUser((id: string, done) => {
+  let user = getUserByGithubId(id);
+  if (user) {
+    //@ts-ignore
+    done(null, user);
+  } else {
+    done({ message: "User not found" }, null);
+  }
+});
 
 const passportGitHubStrategy: PassportStrategy = {
     name: 'github',

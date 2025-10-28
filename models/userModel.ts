@@ -36,13 +36,6 @@ const userModel = {
       };
     }
 
-/*     if (user.password != password) {
-      return {
-        user: null,
-        error: 'Password is incorrect'
-      }
-    } */
-
     return { user };
   },
   findById: (id: number) => {
@@ -53,6 +46,15 @@ const userModel = {
   findByGitHubId: (githubId: string) => {
     const user = database.find(user => user.githubId === githubId);
     return user ? { user, error: null } : { user: null, error: `User not found with id: ${githubId}` };
+  },
+
+  create: (userData: { githubId: string; username: string; name?: string }) => {
+    const newUser = {
+      id: database.length + 1,
+      ...userData,
+    };
+    database.push(newUser);
+    return newUser;
   },
   
 };
