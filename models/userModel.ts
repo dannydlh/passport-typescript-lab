@@ -1,5 +1,6 @@
+import { TUser } from "../types/types";
 
-const database = [
+const database:TUser[] = [
   {
     id: 1,
     name: "Jimmy Smith",
@@ -18,24 +19,51 @@ const database = [
     email: "jonathan123@gmail.com",
     password: "jonathan123!",
   },
+  {
+    id: 4,
+    githubId: "Benj",
+    name: "Benjamin Franklin"
+  }
 ];
 
 const userModel = {
 
   findOne: (email: string) => {
     const user = database.find((user) => user.email === email);
-    if (user) {
-      return user;
+    if (!user) {
+      return {
+        user: null,
+      };
     }
-    throw new Error(`Couldn't find user with email: ${email}`);
+
+/*     if (user.password != password) {
+      return {
+        user: null,
+        error: 'Password is incorrect'
+      }
+    } */
+
+    return { user };
   },
   findById: (id: number) => {
     const user = database.find((user) => user.id === id);
-    if (user) {
-      return user;
-    }
-    throw new Error(`Couldn't find user with id: ${id}`);
+    return user ? { user, error: null } : { user: null, error: `User not found with id: ${id}` };
   },
+
+  findOneByGitHubId: (githubId: string) => {
+    const user = database.find(user => user.githubId === githubId);
+    return user ? { user, error: null } : { user: null, error: `User not found with id: ${githubId}` };
+  },
+
+  create: (userData: { githubId: string; username: string; name?: string }) => {
+    const newUser = {
+      id: database.length + 1,
+      ...userData,
+    };
+    database.push(newUser);
+    return newUser;
+  },
+  
 };
 
 export { database, userModel };
