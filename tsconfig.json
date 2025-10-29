@@ -1,6 +1,8 @@
 {
-  "include": ["declare"],
+  "include": ["**/*.ts", "interfaces/**/*.d.ts"],
+    
   "compilerOptions": {
+    //"typeRoots": ["./types", "./node_modules/@types"],
     
     /* Visit https://aka.ms/tsconfig to read more about this file */
 

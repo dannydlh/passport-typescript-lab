@@ -12,6 +12,19 @@ const port = process.env.port || 8000;
 
 const app = express();
 
+
+/* declare global {
+  namespace Express {
+    interface User{
+      id: number;
+      name: string;
+      email?: string;
+      password?: string;
+      role: string;
+    }
+  }
+} */
+
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
@@ -29,7 +42,6 @@ app.use(
 
 import authRoute from "./routes/authRoute";
 import indexRoute from "./routes/indexRoute";
-import adminRoute from "./routes/adminRoute";
 
 // Middleware for express
 app.use(express.json());
@@ -51,7 +63,6 @@ app.use((req, res, next) => {
 
 app.use("/", indexRoute);
 app.use("/auth", authRoute);
-app.use("/admin", adminRoute);
 
 app.listen(port, () => {
   console.log(`🚀 Server has started on port ${port}`);

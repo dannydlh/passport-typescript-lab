@@ -3,18 +3,8 @@ dotenv.config();
 
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { PassportStrategy } from '../../interfaces/index';
-import { Profile } from 'passport';
-import { VerifyCallback } from "passport-oauth2";
-import { getGithubUserByProfile, getUserByGithubId } from "../../controllers/userController";
+import { getUserById, findOrCreate } from "../../controllers/userController";
 import passport from "passport";
-import type { TUser } from '../../types/types';
-
-
-type PassportDone = (
-  error: Error | null,
-  user?: Express.User | false,
-  info?: { message: string }
-) => void;
 
 const githubStrategy: GitHubStrategy = new GitHubStrategy(
     {
@@ -28,40 +18,25 @@ const githubStrategy: GitHubStrategy = new GitHubStrategy(
         req: Express.Request, 
         accessToken: string, 
         refreshToken: string, 
-        profile: Profile, 
-        done: PassportDone ) => 
+        profile: any, 
+        done: (err?: Error | null, user?: Express.User, info?: object) => void ) => 
             {
-                const user = await getGithubUserByProfile(profile.id);
-                if (!user) {
-                    const newUser =  {  
-                        githubId: profile.id,
-                        username: profile.username,
-                        role: "user"
-                    };
-                    return done(null, newUser);
-                }
-            
-                return user
-                ? done(null, user)
-                : done(null, false, {
-                    message: "Your login details are not valid. Please try again",
-                    });
+                done(null, findOrCreate(profile));
             },
 );
 
-passport.serializeUser((user:Express.User, done) => {
-  done(null, user.githubId);
+passport.serializeUser((user:Express.User, done: (err: any, id?: unknown) => void) => {
+  done(null, user.id);
 });
 
-passport.deserializeUser((id: string, done) => {
-  let user = getUserByGithubId(id);
-  if (user) {
-    //@ts-ignore
-    done(null, user);
-  } else {
-    done({ message: "User not found" }, null);
-  }
-});
+passport.deserializeUser((id: number, done: (err: any, user?: Express.User | false | null) => void) => {
+    try {
+      let user = getUserById(id);
+      done(null, user);
+    } catch(err: any) {
+      done({ message: err.message }, null);
+    }
+  });
 
 const passportGitHubStrategy: PassportStrategy = {
     name: 'github',

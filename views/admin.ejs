@@ -1,5 +1,25 @@
-<h1 class="mt-4">Dashboard</h1>
+<h1 class="mt-4">Admin Dashboard</h1>
 <p class="lead mb-3">Welcome <%= user.name || user.username %></p>
 <p class="lead mb-3">Current Active Sessions:</p>
-<p></p>
+  <h1 style="text-align:center;">Active Sessions</h1>
+
+  <table>
+    <tr>
+      <th>Session ID</th>
+      <th>User ID</th>
+      <th>Action</th>
+    </tr>
+
+    <% sessions.forEach((session) => { %>
+      <tr>
+        <td><%= session.id %></td>
+        <td><%= session.userId %></td>
+        <td>
+          <form method="POST" action="/admin/<%= session.id %>/revoke">
+            <button type="submit">Revoke</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
 <a href="/auth/logout" class="btn btn-secondary">Logout</a>

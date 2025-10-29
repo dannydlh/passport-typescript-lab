@@ -1,1 +1,1 @@
-After spending a couple dozen hours on this, I'm pretty discouraged. Didn't have enough time to add admin capabilities.
+It took me a long time to wrap my head around this one.

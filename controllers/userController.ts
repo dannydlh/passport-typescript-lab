@@ -1,51 +1,43 @@
 import {userModel} from "../models/userModel";
-import type { TUser } from "../types/types";
+import { database } from "../models/userModel";
 
 const getUserByEmailIdAndPassword = (email: string, password: string) => {
   const result = userModel.findOne(email);
-  const user = result.user;
+  const user = result;
   if (user) {
     if (isUserValid(user, password)) {
       return user;
     }
+    throw new Error("Password is incorrect");
   }
-  return null;
+  throw new Error(`Couldn't find user with email: ${email}`);
 };
-
-const getGithubUserByProfile = (profile: string) => {
-  const result = userModel.findOne(profile);
-  const user = result.user;
-  if (user) {
-    return user;
-  }
-  return null;
-}
 
 const getUserById = (id:number) => {
   let user = userModel.findById(id);
   if (user) {
     return user;
   }
-  return null;
+  throw new Error("Couldn't find user");
 };
 
-const getUserByGithubId = (id:string) => {
-  let user = userModel.findByGitHubId(id) || null;
-  if (user) {
-    return user;
-  }
-  return null;
-};
-
-function isUserValid(user: TUser, password: string) {
+function isUserValid(user: any, password: string) {
   return user.password === password;
 }
 
-
+function findOrCreate(profile: any) {
+  try {
+      return userModel.findById(profile.id);
+  } catch {
+      console.log("user created");
+      const user = {id: profile.id, name: profile.displayName || profile.username, role: "user"};
+      database.push(user);
+      return user;
+  }
+}
 
 export {
   getUserByEmailIdAndPassword,
   getUserById,
-  getUserByGithubId,
-  getGithubUserByProfile
+  findOrCreate
 };

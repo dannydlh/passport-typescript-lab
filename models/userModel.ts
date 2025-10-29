@@ -1,6 +1,5 @@
-import { TUser } from "../types/types";
 
-const database:TUser[] = [
+const database:Express.User[] = [
   {
     id: 1,
     name: "Jimmy Smith",
@@ -22,34 +21,24 @@ const database:TUser[] = [
     password: "jonathan123!",
     role: "user"
   },
-  {
-    id: 4,
-    githubId: "Benj",
-    name: "Benjamin Franklin",
-    role: "user"
-  }
 ];
 
 const userModel = {
 
   findOne: (email: string) => {
-    const user = database.find((user) => user.email === email);
-    if (!user) {
-      return {
-        user: null,
-      };
+    const user = database.find((u) => u.email === email);
+    if (user) {
+      return user;
     }
+      throw new Error(`Couldn't find user with email: ${email}`);
+    },
 
-    return { user };
-  },
   findById: (id: number) => {
     const user = database.find((user) => user.id === id);
-    return user ? { user, error: null } : { user: null, error: `User not found with id: ${id}` };
-  },
-
-  findByGitHubId: (githubId: string) => {
-    const user = database.find(user => user.githubId === githubId);
-    return user ? { user, error: null } : { user: null, error: `User not found with id: ${githubId}` };
+    if (user) {
+      return user
+    }
+    throw new Error(`Couldn't find user`)
   },
   
 };

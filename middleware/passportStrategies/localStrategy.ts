@@ -9,26 +9,27 @@ const localStrategy = new LocalStrategy(
     passwordField: "password",
   },
   (email, password, done) => {
-    const user = getUserByEmailIdAndPassword(email, password);
-    return user
-      ? done(null, user)
-      : done(null, false, {
-          message: "Your login details are not valid. Please try again",
-        });
+    try {
+          const user = getUserByEmailIdAndPassword(email, password);
+          done(null, user);
+    } catch(error:any) {
+      done(null, false, {
+          message: error.message,
+      });
+    }
   }
 );
 
-passport.serializeUser((user:Express.User, done) => {
+passport.serializeUser((user:Express.User, done: (err: any, id?: number) => void) => {
   done(null, user.id);
 });
 
-passport.deserializeUser((id: number, done) => {
-  let user = getUserById(id);
-  if (user) {
-    //@ts-ignore
-    done(null, user);
-  } else {
-    done({ message: "User not found" }, null);
+passport.deserializeUser((id: number, done: (err: any, user?: Express.User | false | null) => void) => {
+  try {
+    let user = getUserById(id);
+    done(null, user); // sets req.user
+  } catch(err: any) {
+    done({ message: err.message }, null);
   }
 });
 
