@@ -14,13 +14,28 @@ const messages = req.session.messages ?? [];
   });
 })
 
-router.post("/login",
+/* router.post("/login",
   passport.authenticate("local", {
     successRedirect: "/dashboard",
     failureRedirect: "/auth/login",
     failureMessage: true
   })
-);
+); */
+
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      req.session.messages = [info.message || "Login failed"];
+      return res.redirect("/auth/login");
+    }
+
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      user.role === "admin" ? res.redirect("/admin") : res.redirect("/dashboard");
+    });
+  })(req, res, next);
+});
 
 router.get("/logout", (req, res) => {
   req.logout((err) => {

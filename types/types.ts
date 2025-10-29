@@ -5,4 +5,5 @@ export type TUser = {
   password?: string;
   githubId?: string;
   username?: string;
+  role: string;
 };

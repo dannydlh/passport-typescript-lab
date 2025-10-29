@@ -35,7 +35,8 @@ const githubStrategy: GitHubStrategy = new GitHubStrategy(
                 if (!user) {
                     const newUser =  {  
                         githubId: profile.id,
-                        username: profile.username
+                        username: profile.username,
+                        role: "user"
                     };
                     return done(null, newUser);
                 }
