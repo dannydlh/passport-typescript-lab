@@ -1,5 +1,5 @@
 import passport from "passport";
-import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as LocalStrategy, IVerifyOptions } from "passport-local";
 import { getUserByEmailIdAndPassword, getUserById} from "../../controllers/userController";
 import { PassportStrategy } from '../../interfaces/index';
 
@@ -8,7 +8,7 @@ const localStrategy = new LocalStrategy(
     usernameField: "email",
     passwordField: "password",
   },
-  (email, password, done) => {
+  (email: string, password: string, done: (error: any, user?: false | Express.User | undefined, options?: IVerifyOptions) => void) => {
     try {
           const user = getUserByEmailIdAndPassword(email, password);
           done(null, user);

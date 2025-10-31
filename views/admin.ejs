@@ -1,25 +1,32 @@
-<h1 class="mt-4">Admin Dashboard</h1>
-<p class="lead mb-3">Welcome <%= user.name || user.username %></p>
-<p class="lead mb-3">Current Active Sessions:</p>
-  <h1 style="text-align:center;">Active Sessions</h1>
+<div class="container text-center mt-4">
+  <h1>Admin Dashboard</h1>
+  <h3>Welcome <%= user.name || user.username %></h3>
+  <h5>Active Sessions</h5>
 
-  <table>
-    <tr>
-      <th>Session ID</th>
-      <th>User ID</th>
-      <th>Action</th>
-    </tr>
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped w-75 mx-auto">
+      <thead class="table-light">
+        <tr>
+          <th>Session ID</th>
+          <th>User ID</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% sessions.forEach((session) => { %>
+          <tr>
+            <td><%= session.id %></td>
+            <td><%= session.userId %></td>
+            <td>
+              <form method="POST" action="/admin/<%= session.id %>/revoke">
+                <button type="submit" class="btn btn-danger btn-sm">Revoke</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 
-    <% sessions.forEach((session) => { %>
-      <tr>
-        <td><%= session.id %></td>
-        <td><%= session.userId %></td>
-        <td>
-          <form method="POST" action="/admin/<%= session.id %>/revoke">
-            <button type="submit">Revoke</button>
-          </form>
-        </td>
-      </tr>
-    <% }) %>
-  </table>
-<a href="/auth/logout" class="btn btn-secondary">Logout</a>
+  <a href="/auth/logout" class="btn btn-secondary">Logout</a>
+</div>
